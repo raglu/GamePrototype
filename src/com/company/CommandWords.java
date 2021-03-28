@@ -50,9 +50,9 @@ public class CommandWords {
     /*
      * Print all valid commands to System.out.
      */
-    public void showAll() {
-        for (int i = 0; i < validCommands.length; i++) {
-            System.out.print(validCommands[i] + "  ");
+    public void printAllCommands() {
+        for (String validCommand : validCommands) {
+            System.out.print(validCommand + "  ");
         }
         System.out.println();
     }
