@@ -169,10 +169,6 @@ public class Game {
         r1.setExit(dir1, r2);
         r2.setExit(dir2, r1);
     }
-
-    public static void main(String[] argv) {
-        Game g = new Game();
-        g.play();
-    }
+    
     /* */
 }
