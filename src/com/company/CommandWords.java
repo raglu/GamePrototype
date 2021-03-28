@@ -10,10 +10,7 @@ public class CommandWords {
             "take",
             "drop",
             "look",
-            "give",
-            "light",
-            "turn",
-            "sweep"
+            "attack"
     };
 
     public boolean isCommand(String aString) {
