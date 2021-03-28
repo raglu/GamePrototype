@@ -6,12 +6,11 @@ import java.util.ArrayList;
  * DarkRoom: if you don't have the flashlight,
  * you can't do anything except exit via the exitdir.
  * Note that the flashlight can be lit *only* in the DarkRoom.
- * 
- * @author (Peter Dordal) 
+ *
+ * @author (Peter Dordal)
  * @version (Spring 2006)
  */
-public class DarkRoom extends Room
-{
+public class DarkRoom extends Room {
     // instance variables - replace the example below with your own
     private String exitdir;
     private ArrayList<Item> inventory;
@@ -19,8 +18,7 @@ public class DarkRoom extends Room
     /**
      * If you don't have a light, the only visible way out is exitdir
      */
-    public DarkRoom(String exitdir, String desc, ArrayList<Item> inv)
-    {
+    public DarkRoom(String exitdir, String desc, ArrayList<Item> inv) {
         super(desc);
         this.exitdir = exitdir;
         this.inventory = inv;
@@ -30,12 +28,12 @@ public class DarkRoom extends Room
      * getShortDescription prints the dark description if there is no light.
      */
     public String getShortDescription() {
-        if (Light.haslight(inventory)) 
+        if (Light.haslight(inventory))
             return super.getShortDescription();
         String desc = "in a pitch-dark place! You need a light!";
         return desc;
     }
-    
+
     /**
      * getLongDescription doesn't print all the exits if it's dark, or the contents.
      */
@@ -59,14 +57,13 @@ public class DarkRoom extends Room
     public Room respond(Command c, ArrayList<Item> inventory) {
         String commandWord = c.getCommandWord();
         String object = c.getSecondWord();
-        if (commandWord.equals("go") 
-            && !object.equals(exitdir)
-            && !Light.haslight(inventory) )
-        {
+        if (commandWord.equals("go")
+                && !object.equals(exitdir)
+                && !Light.haslight(inventory)) {
             System.out.println("It's too dark to see any exit that way!");
             return null;
         }
-        
+
         if (commandWord.equals("light")) {
             Item f = Item.findByName(object, inventory);
             if (f == null) {
@@ -83,20 +80,20 @@ public class DarkRoom extends Room
                 System.out.println("You can't light the " + object + "!");
                 return null;
             }
-            
-        } 
+
+        }
         if (commandWord.equals("take")) {
-            if (Light.haslight(inventory)) { 
+            if (Light.haslight(inventory)) {
                 return super.respond(c, inventory);
             } else {
                 System.out.println("It's too dark to see anything to take!");
                 return null;
             }
-        } 
-        
+        }
+
         return super.respond(c, inventory);
-        
+
     }
-    
+
     /* */
 }

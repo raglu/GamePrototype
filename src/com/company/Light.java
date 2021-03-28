@@ -4,20 +4,18 @@ import java.util.ArrayList;
 
 /**
  * Write a description of class Light here.
- * 
- * @author Peter Dordal 
+ *
+ * @author Peter Dordal
  * @version April 3, 2006
  */
-public class Light extends Item
-{
+public class Light extends Item {
     // instance variables - replace the example below with your own
     private boolean is_On = false;
 
     /**
      * Constructor for objects of class Light
      */
-    public Light(String desc, int weight)
-    {
+    public Light(String desc, int weight) {
         super(desc, weight);
     }
 
@@ -25,17 +23,16 @@ public class Light extends Item
         super(desc);
     }
 
-    public boolean isOn ()
-    {
+    public boolean isOn() {
         // put your code here
         return is_On;
     }
-    
+
     public void light() {
         is_On = true;
     }
-    
-    /** 
+
+    /**
      * getLight looks on the given list of Items (usually the inventory)
      * to see if there's a Light object that is lit().
      * If so, the first such is returned.
@@ -55,8 +52,8 @@ public class Light extends Item
         }
         return null;    // get here if not found
     }
-    
+
     public static boolean haslight(ArrayList<Item> inv) {
-        return (getLight(inv) != null) ;
+        return (getLight(inv) != null);
     }
 }
