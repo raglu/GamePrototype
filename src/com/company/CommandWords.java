@@ -20,5 +20,11 @@ public class CommandWords {
         }
         return false;
     }
-    
+
+    public void printAllCommands() {
+        for (String validCommand : validCommands) {
+            System.out.print(validCommand + "  ");
+        }
+        System.out.println();
+    }
 }
