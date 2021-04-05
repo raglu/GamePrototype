@@ -6,7 +6,7 @@ import java.util.StringTokenizer;
 
 public class Parser {
 
-    private CommandWords commands;
+    private final CommandWords commands;
 
     public Parser() {
         commands = new CommandWords();
@@ -31,29 +31,17 @@ public class Parser {
         StringTokenizer tokenizer = new StringTokenizer(inputLine);
 
         if (tokenizer.hasMoreTokens())
-            word1 = tokenizer.nextToken();      // get first word
+            word1 = tokenizer.nextToken();
         else
             word1 = null;
         if (tokenizer.hasMoreTokens())
-            word2 = tokenizer.nextToken();      // get second word
+            word2 = tokenizer.nextToken();
         else
             word2 = null;
-
-        // note: we just ignore the rest of the input line.
-
-        // Now check whether this word is known. If so, create a command
-        // with it. If not, create a "null" command (for unknown command).
 
         if (commands.isCommand(word1))
             return new Command(word1, word2);
         else
             return new Command(null, word2);
-    }
-
-    /**
-     * Print out a list of valid command words.
-     */
-    public void showCommands() {
-        commands.printAllCommands();
     }
 }
