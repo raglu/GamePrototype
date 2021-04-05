@@ -6,12 +6,14 @@ public class Game {
     private final Parser parser;
     private Room currentRoom;
     private final ArrayList<Item> inventory;
+    private final Player player;
 
 
     public Game() {
         parser = new Parser();
         inventory = new ArrayList<>();
         currentRoom = RoomMaker.createRooms(inventory);
+        player = new Player("luigi", 1);
     }
 
     public void play() {
