@@ -1,10 +1,7 @@
 package com.company;
 
-public class Key extends Item{
-    public Key(String d) {
-        super(d);
+public class Key extends Item {
+    public Key() {
+        super("Key");
     }
-
-    private boolean obtainable = true;
-    private int weight = 1;
 }
