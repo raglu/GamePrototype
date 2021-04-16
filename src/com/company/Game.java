@@ -12,8 +12,9 @@ public class Game {
     public Room currentRoom;
     public Player luigi;
 
-    Room asdf; //paths are a bit funky because this stupid implementation causes circular dependency
-    Room fdas;
+    private Room asdf; //paths are a bit funky because this stupid implementation causes circular dependency
+    private Room fdas;
+    private String gameWorld = "GameWorldName";
 
     public Game() {
         parser = new Parser();
@@ -30,6 +31,7 @@ public class Game {
 
     public void play() {
 
+        System.out.println("Welcome to " + gameWorld);
         System.out.println("You are now in " + currentRoom.getName());
         System.out.println("Items in this room: " + currentRoom.getStringOfItemName());
 
@@ -60,6 +62,7 @@ public class Game {
     }
 
     private void quit() {
+        System.out.println("Quitting game...");
         playing = false;
     }
 
