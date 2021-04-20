@@ -1,16 +1,13 @@
 package com.company;
 
 public abstract class NPC {
-    protected String name;
-    protected boolean escapable;
-    protected  int health;
-    protected  int damage;
 
-    public NPC(String name, boolean escapable, int health, int damage) {
+    private String name;
+    private Room currentRoom;
+
+    public NPC(String name, Room currentRoom) {
         this.name = name;
-        this.escapable = escapable;
-        this.health = health;
-        this.damage = damage;
+        this.currentRoom = currentRoom;
     }
 
     public String getName() {

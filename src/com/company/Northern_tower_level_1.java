@@ -12,7 +12,6 @@ public class Northern_tower_level_1 extends Room {
         super("Northern Tower level 1");
 
         setItems();
-        setEnemies();
     }
 
     public void setPaths() {
@@ -23,11 +22,6 @@ public class Northern_tower_level_1 extends Room {
     private void setItems(){
         items.add(new Sword());
         items.add(new Key());
-    }
-
-    private void setEnemies(){
-        npcs.add(new Skaven());
-        npcs.add(new Monster());
     }
 
 }

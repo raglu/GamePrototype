@@ -1,7 +1,7 @@
 package com.company;
 
-public class Skaven extends NPC {
+public class Skaven extends HostileNPC {
     public Skaven() {
-        super("Skaven", true, 4,2);
+        super("Skaven", Northern_tower_level_1.getInstance(), true, 4, 2);
     }
 }

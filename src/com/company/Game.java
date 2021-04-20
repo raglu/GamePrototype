@@ -9,6 +9,10 @@ public class Game {
     private final Parser parser;
     private final GameRules gameRules;
 
+    private ArrayList<Room> rooms;
+    private ArrayList<Player> players;
+    private ArrayList<NPC> npcs;
+
     public Room currentRoom;
     public Player luigi;
 
@@ -33,7 +37,7 @@ public class Game {
 
         System.out.println("Welcome to " + gameWorld);
         System.out.println("You are now in " + currentRoom.getName());
-        System.out.println("Items in this room: " + currentRoom.getStringOfItemName());
+        System.out.println("Items in this room: " + currentRoom.getItemNames());
 
         while (playing) {
             Command command = parser.getCommand();
@@ -92,7 +96,7 @@ public class Game {
 
             currentRoom = chosenPath.getDestination();
             System.out.println("You are now in " + currentRoom.getName());
-            System.out.println("Items in this room: " + currentRoom.getStringOfItemName());
+            System.out.println("Items in this room: " + currentRoom.getItemNames());
         }
     }
 
@@ -162,9 +166,9 @@ public class Game {
     }
 
     private void attackNPC(String npcName) {
-        Weapon weapon = (Weapon) luigi.getEquipped();
-        if(weapon == null){
-            System.out.println("You can't attack, you do not have an weapon equipped");
+        Weapon equippedWeapon = (Weapon) luigi.getEquipped();
+        if (equippedWeapon == null) {
+            System.out.println("You can't attack, you do not have any weapon equipped");
             return;
         }
 
@@ -173,15 +177,19 @@ public class Game {
             return;
         }
 
-        NPC npc = currentRoom.getNpc(npcName);
-        if(npc == null){
+        HostileNPC targetedNPC = null;
+        for (NPC npc : npcs) {
+            if (npc.getName().equalsIgnoreCase(npcName)){
+                targetedNPC = (HostileNPC) npc;
+            }
+        }
+        if (targetedNPC == null) {
             System.out.println("That npc is not here");
             return;
         }
 
-
-
-        weapon.useOnce();
+        targetedNPC.reduceHealth(equippedWeapon.getDamage());
+        equippedWeapon.reduceDurability(1);
     }
 
     public void gameOver() {

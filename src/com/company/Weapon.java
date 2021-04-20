@@ -19,7 +19,7 @@ public abstract class Weapon extends Item {
         return durability;
     }
 
-    public void useOnce(){
-        durability--;
+    public void reduceDurability(int i){
+        durability =- i;
     }
 }

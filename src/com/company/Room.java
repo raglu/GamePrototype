@@ -6,7 +6,7 @@ public abstract class Room {
     protected String name;
     protected ArrayList<Path> paths;
     protected ArrayList<Item> items;
-    protected ArrayList<NPC> npcs;
+    protected ArrayList<HostileNPC> npcs;
 
     public Room(String name) {
         this.name = name;
@@ -17,8 +17,8 @@ public abstract class Room {
 
     public abstract void setPaths();
 
-    public NPC getNpc(String npcName) {
-        for (NPC n : npcs) {
+    public HostileNPC getNpc(String npcName) {
+        for (HostileNPC n : npcs) {
             if (n.getName().equalsIgnoreCase(npcName))
                 return n;
         }
@@ -51,7 +51,7 @@ public abstract class Room {
         items.add(item);
     }
 
-    public String getStringOfItemName() {
+    public String getItemNames() {
         String stringOfItemNames = "";
 
         for (Item i : items) {
