@@ -23,15 +23,18 @@ public class GameRules {
     }
 
     private void checkWinCondition1() {
-        if (game.currentRoom instanceof Northern_tower_level_2 && game.luigi.hasItem("key")) {
-            winCondition = true;
-            System.out.println("You won the game!");
+        for (Player player : game.players) {
+            if (player.getCurrentRoom() instanceof Northern_tower_level_2 && player.hasItem("key")) {
+                game.winGame();
+            }
         }
     }
 
     private void checkRule1() {
-        if (game.luigi.getHealth() <= 0)
-            game.gameOver();
+        for (Player player : game.players) {
+            if (player.getHealth() <= 0)
+                game.gameOver();
+        }
     }
 
     private void checkRule2() {
@@ -45,10 +48,12 @@ public class GameRules {
     }
 
     private void checkRule4() {
-        Weapon weapon = (Weapon) game.luigi.getEquipped();
-        if (weapon != null)
-            if (weapon.getDurability() <= 0)
-                weapon = null;
+        for (Player player : game.players) {
+            Weapon weapon = (Weapon) player.getEquipped();
+            if (weapon != null)
+                if (weapon.getDurability() <= 0)
+                    weapon = null;
+        }
     }
 
 }

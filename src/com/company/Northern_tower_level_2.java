@@ -16,4 +16,8 @@ public class Northern_tower_level_2 extends Room {
         paths.add(new Path(Northern_tower_level_1.getInstance(),"stairs"));
     }
 
+    public void setItems() {
+
+    }
+
 }

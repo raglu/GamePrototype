@@ -4,12 +4,24 @@ public abstract class HostileNPC extends NPC {
     protected boolean escapable;
     protected int health;
     protected int damage;
+    private boolean inCombat = false;
+    private Player targetPlayer = null;
+    private boolean aggressive;
 
-    public HostileNPC(String name, Room currentRoom, boolean escapable, int health, int damage) {
-        super(name, currentRoom);
+    public HostileNPC(Room currentRoom, String name, boolean escapable, int health, int damage) {
+        super(currentRoom, name);
         this.escapable = escapable;
         this.health = health;
         this.damage = damage;
+        this.aggressive = false;
+    }
+
+    public HostileNPC(Room currentRoom, String name, boolean escapable, int health, int damage, boolean aggressive) {
+        super(currentRoom, name);
+        this.escapable = escapable;
+        this.health = health;
+        this.damage = damage;
+        this.aggressive = aggressive;
     }
 
     public boolean isEscapable() {
@@ -20,11 +32,31 @@ public abstract class HostileNPC extends NPC {
         return health;
     }
 
-    public int getDamage() {
-        return damage;
+    public void reduceHealth(int damage) {
+        health -= damage;
     }
 
-    public void reduceHealth(int damage){
-        health =- damage;
+    public void attackPlayer() {
+        targetPlayer.reduceHealth(damage);
+    }
+
+    public boolean isAggressive() {
+        return aggressive;
+    }
+
+    public boolean isInCombat() {
+        return inCombat;
+    }
+
+    public void setInCombat(boolean inCombat) {
+        this.inCombat = inCombat;
+    }
+
+    public Player getTargetPlayer() {
+        return targetPlayer;
+    }
+
+    public void setTargetPlayer(Player targetPlayer) {
+        this.targetPlayer = targetPlayer;
     }
 }

@@ -1,31 +1,36 @@
 package com.company;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public abstract class Room {
     protected String name;
     protected ArrayList<Path> paths;
     protected ArrayList<Item> items;
-    protected ArrayList<HostileNPC> npcs;
+    protected ArrayList<NPC> npcs;
+    protected ArrayList<Player> players;
 
     public Room(String name) {
         this.name = name;
         this.paths = new ArrayList<>();
         this.items = new ArrayList<>();
         this.npcs = new ArrayList<>();
+        this.players = new ArrayList<>();
     }
 
     public abstract void setPaths();
 
-    public HostileNPC getNpc(String npcName) {
-        for (HostileNPC n : npcs) {
+    public abstract void setItems();
+
+    public NPC findNPC(String npcName) {
+        for (NPC n : npcs) {
             if (n.getName().equalsIgnoreCase(npcName))
                 return n;
         }
         return null;
     }
 
-    public Path getPath(String direction) {
+    public Path findPath(String direction) {
         for (Path p : paths) {
             if (p.getPathName().equalsIgnoreCase(direction))
                 return p;
@@ -33,10 +38,9 @@ public abstract class Room {
         return null;
     }
 
-    public Item getItem(String itemName) {
+    public Item findItem(String itemName) {
         for (Item i : items) {
             if (i.getName().equalsIgnoreCase(itemName)) {
-                items.remove(i);
                 return i;
             }
         }
@@ -51,12 +55,57 @@ public abstract class Room {
         items.add(item);
     }
 
-    public String getItemNames() {
-        String stringOfItemNames = "";
+    public void removeItem(Item item) {
+        items.remove(item);
+    }
 
-        for (Item i : items) {
-            stringOfItemNames += i.getName() + ", ";
+    public String getItemNames() {
+        String itemNames = "";
+        for (Item item : items) {
+            itemNames += item.getName() + "  ";
         }
-        return stringOfItemNames;
+        return itemNames;
+    }
+
+    public String getExits() {
+        String exits = "";
+        for (Path path : paths) {
+            exits += path.getPathName() + "  ";
+        }
+        return exits;
+    }
+
+    public String getNpcNames() {
+        String npcNames = "";
+        for (NPC npc : npcs) {
+            npcNames += npc.getName() + "  ";
+        }
+        return npcNames;
+    }
+
+    public void addNPC(NPC npc) {
+        npcs.add(npc);
+    }
+
+    public void addPlayer(Player player) {
+        players.add(player);
+    }
+
+    public void removePlayer(Player player) {
+        players.remove(player);
+    }
+
+    public void removeNPC(NPC npc) {
+        npcs.remove(npc);
+    }
+
+    public boolean hasPlayers(){
+        return players.size() > 0;
+    }
+
+    public Player getRandomPlayer() {
+        Random random = new Random();
+        int index = random.nextInt(players.size());
+        return players.get(index);
     }
 }

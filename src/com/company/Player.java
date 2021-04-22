@@ -9,12 +9,30 @@ public class Player {
     protected int carryCapacity;
     protected ArrayList<Item> inventory;
     protected Item equipped;
+    protected Room currentRoom;
 
-    public Player(String name, int health, int carryCapacity) {
+    private boolean inCombat = false;
+
+    private HostileNPC targetHostileNPC = null;
+
+    public Player(Room currentRoom, String name, int health, int carryCapacity) {
+        this.currentRoom = currentRoom;
         this.name = name;
         this.health = health;
         this.carryCapacity = carryCapacity;
         this.inventory = new ArrayList<>();
+
+        currentRoom.addPlayer(this);
+    }
+
+    public Room getCurrentRoom() {
+        return currentRoom;
+    }
+
+    public void setCurrentRoom(Room newRoom) {
+        currentRoom.removePlayer(this);
+        currentRoom = newRoom;
+        currentRoom.addPlayer(this);
     }
 
     public String getName() {
@@ -45,7 +63,7 @@ public class Player {
         inventory.add(item);
     }
 
-    public Item getItem(String itemName) {
+    public Item findItem(String itemName) {
         for (Item i : inventory) {
             if (i.getName().equalsIgnoreCase(itemName))
                 return i;
@@ -55,13 +73,35 @@ public class Player {
 
     public void removeItem(Item item) {
         inventory.remove(item);
+        if (equipped == item)
+            equipped = null;
     }
 
-    public boolean hasItem(String itemName){
+    public boolean hasItem(String itemName) {
         for (Item i : inventory) {
             if (i.getName().equalsIgnoreCase(itemName))
                 return true;
         }
         return false;
+    }
+
+    public void reduceHealth(int damage) {
+        health -= damage;
+    }
+
+    public boolean isInCombat() {
+        return inCombat;
+    }
+
+    public void setInCombat(boolean inCombat) {
+        this.inCombat = inCombat;
+    }
+
+    public HostileNPC getTargetHostileNPC() {
+        return targetHostileNPC;
+    }
+
+    public void setTargetHostileNPC(HostileNPC targetHostileNPC) {
+        this.targetHostileNPC = targetHostileNPC;
     }
 }

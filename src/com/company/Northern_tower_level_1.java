@@ -10,8 +10,6 @@ public class Northern_tower_level_1 extends Room {
 
     private Northern_tower_level_1() {
         super("Northern Tower level 1");
-
-        setItems();
     }
 
     public void setPaths() {
@@ -19,7 +17,7 @@ public class Northern_tower_level_1 extends Room {
         paths.add(new Path(Nowhere.getInstance(),"door"));
     }
 
-    private void setItems(){
+    public void setItems(){
         items.add(new Sword());
         items.add(new Key());
     }

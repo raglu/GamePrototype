@@ -4,50 +4,51 @@ import java.util.ArrayList;
 
 public class Game {
 
-    public boolean playing = true;
+    private final String gameWorld = "Luigi's tower";
+    private boolean playing = true;
 
-    private final Parser parser;
     private final GameRules gameRules;
-
-    private ArrayList<Room> rooms;
-    private ArrayList<Player> players;
-    private ArrayList<NPC> npcs;
-
-    public Room currentRoom;
-    public Player luigi;
-
-    private Room asdf; //paths are a bit funky because this stupid implementation causes circular dependency
-    private Room fdas;
-    private String gameWorld = "GameWorldName";
+    ArrayList<Room> rooms;
+    ArrayList<Player> players;
+    ArrayList<NPC> npcs;
 
     public Game() {
-        parser = new Parser();
         gameRules = new GameRules(this);
-        currentRoom = Northern_tower_level_1.getInstance();
-        luigi = new Luigi();
 
-        asdf = Nowhere.getInstance();
-        fdas = Northern_tower_level_2.getInstance();
-        currentRoom.setPaths();
-        asdf.setPaths();
-        fdas.setPaths();
+        rooms = EntityGenerator.generateRooms();
+        players = EntityGenerator.generatePlayers();
+        npcs = EntityGenerator.generateNPCs();
+
     }
 
     public void play() {
 
         System.out.println("Welcome to " + gameWorld);
-        System.out.println("You are now in " + currentRoom.getName());
-        System.out.println("Items in this room: " + currentRoom.getItemNames());
 
         while (playing) {
-            Command command = parser.getCommand();
-            processCommand(command);
+            for (Player player : players) {
+                printSituation(player);
+                Command command = Parser.getCommand(player.getName());
+                processPlayerCommand(player, command);
+            }
+            for (NPC npc : npcs) {
+                processNPC(npc);
+            }
             gameRules.checkRules();
         }
         System.out.println("Thank you for playing. Good bye");
     }
 
-    private void processCommand(Command command) {
+    private void printSituation(Player player) {
+        System.out.println("\n" + player.getName() + " is now in " + player.getCurrentRoom().getName());
+        if (player.isInCombat())
+            System.out.println(player.getName() + " is in combat with " + player.getTargetHostileNPC().getName());
+        System.out.println("- Exits in this room: " + player.getCurrentRoom().getExits());
+        System.out.println("- Items in this room: " + player.getCurrentRoom().getItemNames());
+        System.out.println("- NPCs in this room: " + player.getCurrentRoom().getNpcNames());
+    }
+
+    private void processPlayerCommand(Player player, Command command) {
 
         String firstWord = command.getFirstWord();
         String secondWord = command.getSecondWord();
@@ -55,12 +56,12 @@ public class Game {
         switch (firstWord) {
             case "quit" -> quit();
             case "help" -> printHelp();
-            case "go" -> goPath(secondWord);
-            case "inventory" -> printInventory();
-            case "equip" -> equipItem(secondWord);
-            case "take" -> takeItem(secondWord);
-            case "drop" -> dropItem(secondWord);
-            case "attack" -> attackNPC(secondWord);
+            case "go" -> goPath(player, secondWord);
+            case "inventory" -> printInventory(player);
+            case "equip" -> equipItem(player, secondWord);
+            case "take" -> takeItem(player, secondWord);
+            case "drop" -> dropItem(player, secondWord);
+            case "attack" -> attackNPC(player, secondWord);
             default -> System.out.println("I don't know what you mean...");
         }
     }
@@ -75,100 +76,126 @@ public class Game {
         System.out.println("quit  help  go  inventory  equip  take  drop  attack");
     }
 
-    private void goPath(String pathName) {
+    private void goPath(Player player, String pathName) {
+        if (player.isInCombat()) {
+            if (!player.getTargetHostileNPC().isEscapable()){
+                System.out.println(player.getName() + " cannot escape " + player.getTargetHostileNPC().getName());
+                return;
+            }
+        }
+
         if (pathName == null) {
             System.out.println("Go where?");
             return;
         }
 
-        Path chosenPath = currentRoom.getPath(pathName);
+        Path chosenPath = player.getCurrentRoom().findPath(pathName);
 
         if (chosenPath == null) {
-            System.out.println("You can't go that way");
-        } else {
-
-            Item requirement = chosenPath.getRequirement();
-            if (requirement != null)
-                if (!luigi.hasItem(requirement.getName())) {
-                    System.out.println("You need a " + requirement.getName() + " to enter");
-                    return;
-                }
-
-            currentRoom = chosenPath.getDestination();
-            System.out.println("You are now in " + currentRoom.getName());
-            System.out.println("Items in this room: " + currentRoom.getItemNames());
+            System.out.println(player.getName() + " can't go that way");
+            return;
         }
+
+        Item requirement = chosenPath.getRequirement();
+        if (requirement != null) {
+            if (!player.hasItem(requirement.getName())) {
+                System.out.println(player.getName() + " need a " + requirement.getName() + " to enter");
+                return;
+            }
+        }
+
+        player.setInCombat(false);
+        player.setTargetHostileNPC(null);
+
+        player.setCurrentRoom(chosenPath.getDestination());
+        System.out.println(player.getName() + " went through " + chosenPath.getPathName());
     }
 
-    private void printInventory() {
-        ArrayList<Item> inventory = luigi.getInventory();
+    private void printInventory(Player player) {
+        ArrayList<Item> inventory = player.getInventory();
         System.out.print("Inventory: ");
         for (Item i : inventory) {
             System.out.print(i.getName() + ", ");
         }
-        Item equipped = luigi.getEquipped();
+        Item equipped = player.getEquipped();
+        System.out.print("\nEquipped: ");
         if (equipped != null)
-            System.out.println("\nCurrently equipped: " + equipped.getName());
-        else
-            System.out.println("\nYou don't have any items equipped");
+            System.out.print(equipped.getName());
+        System.out.println();
     }
 
-    private void equipItem(String itemName) {
+    private void equipItem(Player player, String itemName) {
         if (itemName == null) {
             System.out.println("Equip what?");
             return;
         }
 
-        Item item = luigi.getItem(itemName);
+        Item item = player.findItem(itemName);
 
         if (item == null) {
-            System.out.println("You don't have that item");
-        } else if (item instanceof Weapon) {
-            luigi.setEquipped(item);
-            System.out.println("You equipped " + item.getName());
-        } else {
-            System.out.println("You can't equip that item");
+            System.out.println(player.getName() + " does not have that item");
+            return;
         }
+        if (!(item instanceof Weapon)) {
+            System.out.println(player.getName() + " can't equip that item");
+            return;
+        }
+        player.setEquipped(item);
+        System.out.println(player.getName() + " equipped " + item.getName());
     }
 
-    private void takeItem(String itemName) {
+    private void takeItem(Player player, String itemName) {
         if (itemName == null) {
             System.out.println("Take what?");
             return;
         }
 
-        Item item = currentRoom.getItem(itemName);
+        Item item = player.getCurrentRoom().findItem(itemName);
 
         if (item == null) {
-            System.out.println("You can't take that");
-        } else {
-            luigi.addItem(item);
-            System.out.println("You took " + item.getName());
+            System.out.println(player.getName() + " can't take that");
+            return;
         }
+
+        int currentCarryWeight = 0;
+
+        for (Item inventoryItem : player.getInventory()) {
+            currentCarryWeight += inventoryItem.getWeight();
+        }
+
+        if (player.getCarryCapacity() < currentCarryWeight + item.getWeight()) {
+            System.out.println(player.getName() + " cannot carry anymore items");
+            return;
+        }
+
+        player.getCurrentRoom().removeItem(item);
+        player.addItem(item);
+        System.out.println(player.getName() + " took " + item.getName());
+
     }
 
-    private void dropItem(String itemName) {
+    private void dropItem(Player player, String itemName) {
         if (itemName == null) {
             System.out.println("Drop what?");
             return;
         }
 
-        Item item = luigi.getItem(itemName);
+        Item item = player.findItem(itemName);
 
         if (item == null) {
-            System.out.println("You don't have that item");
-        } else {
-            currentRoom.addItem(item);
-            luigi.removeItem(item);
-            System.out.println("You dropped " + item.getName());
+            System.out.println(player.getName() + " does not have that item");
+            return;
         }
 
+        player.getCurrentRoom().addItem(item);
+        player.removeItem(item);
+        System.out.println(player.getName() + " dropped " + item.getName());
     }
 
-    private void attackNPC(String npcName) {
-        Weapon equippedWeapon = (Weapon) luigi.getEquipped();
+    private void attackNPC(Player player, String npcName) {
+        Weapon equippedWeapon = (Weapon) player.getEquipped();
         if (equippedWeapon == null) {
-            System.out.println("You can't attack, you do not have any weapon equipped");
+            System.out.println(player.getName() + " can't attack without a weapon equipped");
             return;
         }
 
@@ -177,19 +204,64 @@ public class Game {
             return;
         }
 
-        HostileNPC targetedNPC = null;
-        for (NPC npc : npcs) {
-            if (npc.getName().equalsIgnoreCase(npcName)){
-                targetedNPC = (HostileNPC) npc;
-            }
-        }
-        if (targetedNPC == null) {
-            System.out.println("That npc is not here");
+        NPC targetNPC = player.currentRoom.findNPC(npcName);
+
+        if (targetNPC == null) {
+            System.out.println("That NPC is not here");
             return;
         }
 
-        targetedNPC.reduceHealth(equippedWeapon.getDamage());
+        if (!(targetNPC instanceof HostileNPC)) {
+            System.out.println("Non-hostile NPCs cannot be attacked");
+            return;
+        }
+
+        HostileNPC targetHostileNPC = (HostileNPC) targetNPC;
+        targetHostileNPC.reduceHealth(equippedWeapon.getDamage());
         equippedWeapon.reduceDurability(1);
+
+        player.setInCombat(true);
+        player.setTargetHostileNPC(targetHostileNPC);
+        targetHostileNPC.setInCombat(true);
+        targetHostileNPC.setTargetPlayer(player);
+
+        System.out.println(player.getName() + " attacked " + targetHostileNPC.getName());
+        System.out.println(targetHostileNPC.getName() + " has " + targetHostileNPC.getHealth() + " health");
+        if (equippedWeapon.getDurability() ==0)
+            System.out.println(player.getName() + "equipped weapon broke");
+    }
+
+    private void processNPC(NPC npc) {
+        if (npc instanceof HostileNPC) {
+            processHostileNPC((HostileNPC) npc);
+        }
+        //TODO wtf do none-hostile NPCs do?
+    }
+
+    private void processHostileNPC(HostileNPC hostileNPC) {
+        if(hostileNPC.getHealth() <=  0){
+            System.out.println(hostileNPC.getName() + " died");
+            npcs.remove(hostileNPC);
+            hostileNPC.getCurrentRoom().removeNPC(hostileNPC);
+        }
+
+        if (hostileNPC.isInCombat()) {
+            hostileNPC.attackPlayer();
+            Player targetPlayer = hostileNPC.getTargetPlayer();
+            System.out.println(hostileNPC.getName() + " attacked " + targetPlayer.getName());
+            System.out.println(targetPlayer.getName() + " has " + targetPlayer.getHealth() + " health");
+            return;
+        }
+
+        if (hostileNPC.isAggressive() && hostileNPC.getCurrentRoom().hasPlayers()) {
+            Player targetPlayer = hostileNPC.getCurrentRoom().getRandomPlayer();
+            targetPlayer.setInCombat(true);
+            targetPlayer.setTargetHostileNPC(hostileNPC);
+            hostileNPC.setInCombat(true);
+            hostileNPC.setTargetPlayer(targetPlayer);
+
+            System.out.println(hostileNPC.getName() + " has engaged in combat with " + targetPlayer.getName());
+        }
     }
 
     public void gameOver() {
@@ -197,4 +269,7 @@ public class Game {
         System.out.println("GameOver");
     }
 
+    public void winGame() {
+        System.out.println("You won the game!");
+    }
 }

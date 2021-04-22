@@ -6,12 +6,12 @@ import java.util.StringTokenizer;
 
 public class Parser {
 
-    public Command getCommand() {
+    public static Command getCommand(String caller) {
         String inputLine = "";
         String word1;
         String word2;
 
-        System.out.print("> ");
+        System.out.print(caller + "> ");
 
         BufferedReader reader =
                 new BufferedReader(new InputStreamReader(System.in));
