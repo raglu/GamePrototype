@@ -1,4 +1,4 @@
-package com.company;
+package gameDSL;
 
 public class Northern_tower_level_2 extends Room {
 

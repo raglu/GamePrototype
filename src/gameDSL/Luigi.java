@@ -1,4 +1,4 @@
-package com.company;
+package gameDSL;
 
 public class Luigi extends Player{
 

@@ -1,4 +1,4 @@
-package com.company;
+package gameDSL;
 
 public class GameRules {
 
@@ -25,6 +25,7 @@ public class GameRules {
     private void checkWinCondition1() {
         for (Player player : game.players) {
             if (player.getCurrentRoom() instanceof Northern_tower_level_2 && player.hasItem("key")) {
+                winCondition = true;
                 game.winGame();
             }
         }

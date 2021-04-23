@@ -1,4 +1,4 @@
-package com.company;
+package gameDSL;
 
 import java.util.ArrayList;
 import java.util.Random;

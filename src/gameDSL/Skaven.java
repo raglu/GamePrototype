@@ -1,4 +1,4 @@
-package com.company;
+package gameDSL;
 
 public class Skaven extends HostileNPC {
 

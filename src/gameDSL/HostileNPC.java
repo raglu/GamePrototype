@@ -1,4 +1,4 @@
-package com.company;
+package gameDSL;
 
 public abstract class HostileNPC extends NPC {
     protected boolean escapable;

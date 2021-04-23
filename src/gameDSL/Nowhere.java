@@ -1,4 +1,4 @@
-package com.company;
+package gameDSL;
 
 public class Nowhere extends Room {
     static private Nowhere instance = new Nowhere();

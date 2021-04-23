@@ -1,4 +1,4 @@
-package com.company;
+package gameDSL;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

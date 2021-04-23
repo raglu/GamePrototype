@@ -1,4 +1,4 @@
-package com.company;
+package gameDSL;
 
 public class Main {
     public static void main(String[] argv) {

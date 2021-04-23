@@ -1,4 +1,4 @@
-package com.company;
+package gameDSL;
 
 public class Mario extends Player {
 
