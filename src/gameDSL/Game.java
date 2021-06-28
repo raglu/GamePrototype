@@ -4,16 +4,18 @@ import java.util.ArrayList;
 
 public class Game {
 
-    private final String gameWorld = "Luigi's tower";
-    private boolean playing = true;
+    private String gameWorld;
+    private boolean playing;
 
     private final GameRules gameRules;
     ArrayList<Room> rooms;
     ArrayList<Player> players;
     ArrayList<NPC> npcs;
 
-    public Game() {
+    public Game(String gameWorldName) {
         gameRules = new GameRules(this);
+
+        gameWorld = gameWorldName;
 
         rooms = EntityGenerator.generateRooms();
         players = EntityGenerator.generatePlayers();
@@ -22,6 +24,8 @@ public class Game {
     }
 
     public void play() {
+
+        playing = true;
 
         System.out.println("Welcome to " + gameWorld);
 
